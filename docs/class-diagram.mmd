@@ -1,0 +1,54 @@
+classDiagram
+    direction TB
+
+    class Ground {
+        +UUID id
+        +String name
+        +String location_description
+        +Float latitude
+        +Float longitude
+        +List~String~ supported_sports
+        +DateTime created_at
+        +GroundReport latest_report
+        +Float distance_km
+    }
+
+    class GroundReport {
+        +UUID id
+        +UUID ground_id
+        +GroundStatus status
+        +String sport_in_progress
+        +String note
+        +DateTime submitted_at
+        +String reporter_id
+        +Boolean is_demo
+        +computeFreshness() FreshnessInfo
+    }
+
+    class GroundService {
+        +getGrounds(options) Promise~GroundsFetchResult~
+        +getGroundReportHistory(groundId) Promise~List~GroundReport~~
+        -applyFilters(grounds, options) List~Ground~
+        -sortGrounds(grounds, sortBy) List~Ground~
+    }
+
+    class ReportService {
+        +submitGroundReport(input) Promise~ReportSubmitResult~
+        -validateReportSubmission(input) ValidationResult
+        -sanitizeInput(text) String
+        -checkClientCooldown() Boolean
+    }
+
+    class StatusUtils {
+        +computeFreshness(submittedAt, now, thresholds) FreshnessInfo
+        +determineEffectiveStatus(latestReport, now, thresholds) EffectiveStatusInfo
+        +formatRelativeTime(date, now) String
+        +calculateHaversineDistance(lat1, lon1, lat2, lon2) Float
+    }
+
+    Ground "1" o-- "0..*" GroundReport : has history of
+    GroundService ..> Ground : retrieves and filters
+    GroundService ..> GroundReport : joins latest
+    GroundService ..> StatusUtils : calculates freshness & distance
+    ReportService ..> GroundReport : validates and stores
+    ReportService ..> Ground : references ground_id

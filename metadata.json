@@ -1,0 +1,6 @@
+{
+  "name": "GroundPulse",
+  "description": "Student-powered campus sports-ground discovery and availability-reporting platform. Find your ground. Know the game.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

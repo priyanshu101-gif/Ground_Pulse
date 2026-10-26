@@ -1,0 +1,21 @@
+flowchart TD
+    A[Student opens GroundPulse] --> B[Search / Filter Campus Grounds]
+    B -->|Filter by Sport / Status / Distance| C[View Ground Cards or Campus Map]
+    C --> D[Select Specific Ground]
+    D --> E[Inspect Current Status, Freshness & Historical Check-ins]
+    E --> F[Student Decides to Report Ground Availability]
+    F --> G[Fill Report Form: Status, Sport, Notes]
+    G --> H{Client-side Validation & Cooldown}
+    H -->|Errors Detected| I[Display Field Errors & Prevent Submission]
+    I --> G
+    H -->|Valid| J{Is Supabase Configured?}
+    J -->|Yes| K[Send INSERT to Supabase PostgreSQL]
+    J -->|No| L[Store in Local Demo Session Storage]
+    K --> M{Supabase RLS & DB Constraints Check}
+    M -->|Violated / DB Error| N[Surface Database Error with Retry Option]
+    M -->|Accepted| O[Report Committed to Database]
+    L --> P[Report Stored Locally]
+    O --> Q[Trigger Ground Service Re-fetch]
+    P --> Q
+    Q --> R[Calculate New Freshness Category]
+    R --> S[Display Fresh Status Across Directory & Map]
